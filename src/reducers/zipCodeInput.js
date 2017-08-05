@@ -1,15 +1,15 @@
-import { CHANGE_CURRENCY } from '../actions'
+import { CHANGE_ZIP_CODE } from '../actions'
 
 const initialState = {
-    currencyVal: 50.00
+    zipCodeVal: null
 }
 
 const currencyInput = (state = initialState, action) => {
     switch(action.type){
-        case CHANGE_CURRENCY:
+        case CHANGE_ZIP_CODE:
             return {
                 ...state,
-                currencyVal: action.item
+                zipCodeVal: action.item
             }
         default:
             return state
