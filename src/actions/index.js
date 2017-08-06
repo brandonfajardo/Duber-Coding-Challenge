@@ -10,6 +10,7 @@ export const updateError = item => ({ type: UPDATE_ERROR, item })
 
 // Thunks
 import axios from 'axios'
+import _ from 'lodash'
 
 export const fetchLocations = (x) => {
     return (dispatch) => {
@@ -36,7 +37,9 @@ export const fetchLocations = (x) => {
                 }
             })
 
-            return flowerRetailersWithin100M.concat(preRollRetailersWithin100M)
+            return _.uniq(flowerRetailersWithin100M.concat(preRollRetailersWithin100M), (retailer) => {
+                return retailer.name
+            })
         })
         .then((retailers) => {
             dispatch({ type: SET_RETAILERS, item: retailers })

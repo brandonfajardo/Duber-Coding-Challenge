@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import RetailerList from './retailerList'
 import { connect } from 'react-redux'
 import { fetchLocations, updateError } from '../actions'
 import CurrencyInput from './currencyInput'
@@ -47,6 +48,8 @@ class App extends Component {
         
         {this.props.error && this.renderError()}
 
+        {this.props.retailers && <RetailerList retailers={this.props.retailers} />}
+
       </div>
     )
   }
@@ -56,6 +59,7 @@ const mapStateToProps = (state) => ({
   zipCodeVal: state.zipCodeInput.zipCodeVal,
   currencyVal: state.currencyInput.currencyVal,
   error: state.error.message,
+  retailers: state.retailer.retailers,
 })
 
 const mapDispatchToProps = {
