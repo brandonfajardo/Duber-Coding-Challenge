@@ -1,7 +1,7 @@
 import { CHANGE_ZIP_CODE } from '../actions'
 
 const initialState = {
-    zipCodeVal: null
+    zipCodeVal: ''
 }
 
 const currencyInput = (state = initialState, action) => {
