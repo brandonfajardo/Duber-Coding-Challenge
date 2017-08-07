@@ -1,9 +1,31 @@
 import React, { Component } from 'react'
 import RetailerList from './retailerList'
 import { connect } from 'react-redux'
-import { fetchLocations, updateError } from '../actions'
+import { fetchLocations, updateError, addToCart } from '../actions'
 import CurrencyInput from './currencyInput'
 import ZipCodeInput from './zipCodeInput'
+import Cart from './cart'
+
+const styles = {
+  Error: {
+    color: 'red', 
+    marginTop: '10px', 
+    fontSize: '12px'
+  },
+  AppContainer: {
+    marginTop: '10px'
+  },
+  ZipCodeText: {
+    marginTop: '20px'
+  },
+  Submit: {
+    width: '300px', 
+    marginTop: '20px'
+  },
+  Loading: {
+    marginTop: '15px'
+  }
+}
 
 class App extends Component {
   constructor(props){
@@ -23,32 +45,46 @@ class App extends Component {
   }
 
   renderError() {
-    return (
-      <p style={{color: 'red', marginTop: '10px', fontSize: '12px'}}>{this.props.error}</p>
-    )
+    return <p style={styles.Error}>{this.props.error}</p>
+  }
+
+  renderLoading() {
+    return <p style={styles.Loading}>Loading...</p>
   }
 
   render() {
     return (
-      <div style={{marginTop: '10px'}}>
+      <div style={styles.AppContainer}>
         <h1>DÜBER</h1>
         
-        <p>Enter an amount you would like to spend</p>
-        <div>$<CurrencyInput /></div>
+        {!this.props.submitted && (
+          <div>
+            <p>Enter an amount you would like to spend</p>
+            <div>$<CurrencyInput /></div>
+          </div>
+        )}
         
-        <p style={{marginTop: '20px'}}>Enter your zip code</p>
+        <p style={styles.ZipCodeText}>Enter your zip code</p>
         <ZipCodeInput />
 
         <button
-          style={{width: '300px', marginTop: '20px'}}
+          style={styles.Submit}
           onClick={() => this.onFetchLocations()}
         >
           Submit
         </button>
         
-        {this.props.error && this.renderError()}
+        {this.props.submitted && <Cart currencyVal={this.props.currencyVal} />}
 
-        {this.props.retailers && <RetailerList retailers={this.props.retailers} />}
+        {!this.props.retailers && this.props.submitting && this.renderLoading()}
+        {this.props.error == "Zip code cannot be left blank" && this.renderError()}
+        {this.props.retailers && (
+          <RetailerList 
+            retailers={this.props.retailers}
+            addToCart={this.props.addToCart}
+            itemIDs={this.props.itemIDs}
+          />
+        )}
 
       </div>
     )
@@ -60,11 +96,15 @@ const mapStateToProps = (state) => ({
   currencyVal: state.currencyInput.currencyVal,
   error: state.error.message,
   retailers: state.retailer.retailers,
+  itemIDs: state.cart.itemIDs,
+  submitted: state.retailer.submitted,
+  submitting: state.retailer.submitting
 })
 
 const mapDispatchToProps = {
   fetchLocations,
-  updateError
+  updateError,
+  addToCart
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
