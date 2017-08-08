@@ -1,3 +1,9 @@
+To run the application
+1. Download or clone
+2. cd into folder & npm install
+3. npm start
+4. localhost:8080
+---------------------------------------------------
 What did you want to do but were unable to because you ran out of time?
 - Create the backend using Node, Express and Mongo. Would have to setup the server and seed a lot of data!
 
