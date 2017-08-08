@@ -73,7 +73,6 @@ class App extends Component {
         </button>
         
         {this.props.submitted && <Cart currencyVal={this.props.currencyVal} />}
-
         {!this.props.retailers && this.props.submitting && this.renderLoading()}
         {!this.props.retailers && this.props.error && this.renderError()}
         {this.props.retailers && (

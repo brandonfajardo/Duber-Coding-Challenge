@@ -9,7 +9,6 @@ const initialState = {
 const cart = (state = initialState, action) => {
     switch(action.type){
         case ADD_TO_CART:
-            console.log(action.item)
             return {
                 ...state,
                 cartItems: [...state.cartItems].concat({

@@ -7,19 +7,15 @@ const initialState = {
 const currencyInput = (state = initialState, action) => {
     switch(action.type){
         case REMOVE_FROM_CART:
-            console.log(action.item)
             return {
-                ...state,
                 currencyVal: state.currencyVal + action.item.price
             }
         case ADD_TO_CART:
             return {
-                ...state,
                 currencyVal: state.currencyVal - action.item.product.price
             }
         case CHANGE_CURRENCY:
             return {
-                ...state,
                 currencyVal: action.item
             }
         default:

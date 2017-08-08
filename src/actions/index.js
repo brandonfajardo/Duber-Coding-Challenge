@@ -28,9 +28,6 @@ export const fetchLocations = (zipCode) => {
         dispatch({ type: SUBMITTING })
         axios.get(`http://maps.googleapis.com/maps/api/geocode/json?address=${zipCode}`)
             .then((res) => {
-                let lat;
-                let lng;
-
                 if (res.data.results.length === 0){
                     dispatch({ type: UPDATE_ERROR, item: "Zip code does not exist."})
                 } else {
