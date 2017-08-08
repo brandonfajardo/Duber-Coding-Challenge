@@ -1,4 +1,4 @@
-import { SET_RETAILERS, SUBMITTING, CLEAR_RETAILER_LIST } from '../actions'
+import { SET_RETAILERS, SUBMITTING, CLEAR_RETAILER_LIST, UPDATE_ERROR } from '../actions'
 
 const initialState = {
     retailers: null,
@@ -23,6 +23,11 @@ const retailer = (state = initialState, action) => {
             return {
                 ...state,
                 retailers: null
+            }
+        case UPDATE_ERROR: 
+            return {
+                ...state,
+                submitting: false
             }
         default:
             return state

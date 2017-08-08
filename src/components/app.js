@@ -35,10 +35,8 @@ class App extends Component {
   }
 
   onFetchLocations() {
-    const { zipCodeVal, currencyVal } = this.props
-
-    if (zipCodeVal){
-      this.props.fetchLocations({ zipCodeVal, currencyVal })
+    if (this.props.zipCodeVal){
+      this.props.fetchLocations(this.props.zipCodeVal)
     } else {
       this.props.updateError('Zip code cannot be left blank')
     }
@@ -64,7 +62,7 @@ class App extends Component {
           </div>
         )}
         
-        <p style={styles.ZipCodeText}>Enter your zip code</p>
+        <p style={styles.ZipCodeText}>Enter your zip code (Preferrably in Seattle, ex. 98106)</p>
         <ZipCodeInput />
 
         <button
@@ -77,7 +75,7 @@ class App extends Component {
         {this.props.submitted && <Cart currencyVal={this.props.currencyVal} />}
 
         {!this.props.retailers && this.props.submitting && this.renderLoading()}
-        {this.props.error == "Zip code cannot be left blank" && this.renderError()}
+        {!this.props.retailers && this.props.error && this.renderError()}
         {this.props.retailers && (
           <RetailerList 
             retailers={this.props.retailers}
@@ -92,13 +90,13 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  zipCodeVal: state.zipCodeInput.zipCodeVal,
-  currencyVal: state.currencyInput.currencyVal,
-  error: state.error.message,
-  retailers: state.retailer.retailers,
-  itemIDs: state.cart.itemIDs,
-  submitted: state.retailer.submitted,
-  submitting: state.retailer.submitting
+    zipCodeVal: state.zipCodeInput.zipCodeVal,
+    currencyVal: state.currencyInput.currencyVal,
+    error: state.error.message,
+    retailers: state.retailer.retailers,
+    itemIDs: state.cart.itemIDs,
+    submitted: state.retailer.submitted,
+    submitting: state.retailer.submitting
 })
 
 const mapDispatchToProps = {

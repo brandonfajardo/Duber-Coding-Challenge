@@ -22,39 +22,63 @@ export const toggleSuccess = () => ({ type: TOGGLE_SUCCESS })
 import axios from 'axios'
 import _ from 'lodash'
 
-export const fetchLocations = (x) => {
+export const fetchLocations = (zipCode) => {
     return (dispatch) => {
         dispatch({ type: CLEAR_RETAILER_LIST })
         dispatch({ type: SUBMITTING })
-        Promise.all(
-            [
-                axios.get('https://admin.duberex.com/products/geo_search.json?gps[]=47.2612&gps[]=-121.4174952&searchText=flower'),
-                axios.get('https://admin.duberex.com/products/geo_search.json?gps[]=47.2612&gps[]=-121.4174952&searchText=pre-roll')
-            ]
-        )
-        .then((results) => {
-           const flowerRetailersWithin100M = results[0].data.filter((retailer) => {
-                if (retailer.distance <= 100 && retailer.products.length >= 3){
-                    return retailer
+        axios.get(`http://maps.googleapis.com/maps/api/geocode/json?address=${zipCode}`)
+            .then((res) => {
+                let lat;
+                let lng;
+
+                if (res.data.results.length === 0){
+                    dispatch({ type: UPDATE_ERROR, item: "Zip code does not exist."})
                 } else {
-                    return false
+                    return {
+                        lat: res.data.results[0].geometry.location.lat,
+                        lng: res.data.results[0].geometry.location.lng
+                    }
                 }
             })
+            .then((location) => {
+                if (location){
+                    Promise.all(
+                    [
+                        axios.get(`https://admin.duberex.com/products/geo_search.json?gps[]=${location.lat}&gps[]=${location.lng}&searchText=flower`),
+                        axios.get(`https://admin.duberex.com/products/geo_search.json?gps[]=${location.lat}&gps[]=${location.lng}&searchText=pre-roll`)
+                    ]
+                )
+                .then((results) => {
+                    const flowerRetailersWithin100M = results[0].data.filter((retailer) => {
+                        if (retailer.distance <= 100 && retailer.products.length >= 3){
+                            return retailer
+                        } else {
+                            return false
+                        }
+                    })
 
-            const preRollRetailersWithin100M = results[1].data.filter((retailer) => {
-                if (retailer.distance <= 100 && retailer.products.length >= 3){
-                    return retailer
-                } else {
-                    return false
-                }
-            })
+                    const preRollRetailersWithin100M = results[1].data.filter((retailer) => {
+                        if (retailer.distance <= 100 && retailer.products.length >= 3){
+                            return retailer
+                        } else {
+                            return false
+                        }
+                    })
 
-            return _.uniq(flowerRetailersWithin100M.concat(preRollRetailersWithin100M), (retailer) => {
-                return retailer.name
-            })
-        })
-        .then((retailers) => {
-            dispatch({ type: SET_RETAILERS, item: retailers })
+                    if (flowerRetailersWithin100M.length === 0 && preRollRetailersWithin100M.length === 0){
+                        dispatch({ type: UPDATE_ERROR, item: "No retailers within 100 miles of specified zip code."})
+                    } else {
+                        return _.uniq(flowerRetailersWithin100M.concat(preRollRetailersWithin100M), (retailer) => {
+                            return retailer.name
+                        })
+                    }
+                })
+                .then((retailers) => {
+                    if (retailers){
+                        dispatch({ type: SET_RETAILERS, item: retailers })
+                    }
+                })
+            }
         })
     }
 }
